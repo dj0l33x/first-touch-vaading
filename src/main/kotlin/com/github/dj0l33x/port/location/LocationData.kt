@@ -4,4 +4,4 @@ import java.time.LocalDateTime
 
 data class LocationSave(val data: String)
 data class LocationDelete(val id: Long)
-data class LocationList(val id: Long, val data: String, val createdAt: LocalDateTime)
+data class LocationGet(val id: Long, val data: String, val createdAt: LocalDateTime)

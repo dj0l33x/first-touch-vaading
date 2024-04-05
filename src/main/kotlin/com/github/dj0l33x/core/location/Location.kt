@@ -1,24 +1,37 @@
 package com.github.dj0l33x.core.location
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import java.time.ZoneOffset
+import java.time.ZoneOffset.UTC
 import java.time.ZonedDateTime
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicLong
 
-@Entity
-data class Location(
+class Location(val id: Long, val data: String, val createdAt: ZonedDateTime) {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    companion object {
+        private val ids = AtomicLong(0)
+        private val db = ConcurrentHashMap<Long, LocationEntity>()
 
-    @Column(nullable = false)
-    var value: String = "",
+        fun save(data: String): Location {
+            val id = ids.incrementAndGet()
+            val entity = LocationEntity(id, data, ZonedDateTime.now(UTC))
+            db.put(id, entity)
+            return Location(entity.id, entity.data, entity.createdAt)
+        }
 
-    @Column(nullable = false)
-    var createdAt: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
-)
+        fun update(id: Long, data: String): Location? {
+            val newEntity = db.get(id)?.let { LocationEntity(it.id, data, it.createdAt) }
+            if (newEntity == null) {
+                throw LocationNotFoundException()
+            }
+            db.put(id, newEntity)
+            return Location(newEntity.id, newEntity.data, newEntity.createdAt)
+        }
 
+        fun delete(id: Long): Location? =
+            db.remove(id)?.let { Location(it.id, it.data, it.createdAt) }
+
+        fun list(): List<Location> =
+            db.values.map { Location(it.id, it.data, it.createdAt) }
+    }
+
+}

@@ -1,24 +1,37 @@
 package com.github.dj0l33x.port.location
 
+import com.github.dj0l33x.core.location.Location
 import org.springframework.stereotype.Service
 
+
 interface LocationService {
-    fun saveLocation(locationSave: LocationSave)
-    fun deleteLocation(locationDelete: LocationDelete)
-    fun getLocations(): List<LocationList>
+    fun saveLocation(locationSave: LocationSave): LocationGet
+    fun deleteLocation(locationDelete: LocationDelete): LocationGet?
+    fun getLocations(): List<LocationGet>
 }
+
 
 @Service
 private class LocationServiceImpl : LocationService {
-    override fun saveLocation(locationSave: LocationSave) {
-        TODO("Not yet implemented")
+
+    init {
+        Location.save("/opt/prometheus/cache")
+        Location.save("/mnt/ssd")
+        Location.save("/home/pi")
+        Location.save("/mnt/hdd")
     }
 
-    override fun deleteLocation(locationDelete: LocationDelete) {
-        TODO("Not yet implemented")
-    }
+    override fun saveLocation(locationSave: LocationSave): LocationGet =
+        Location.save(locationSave.data)
+            .let { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
 
-    override fun getLocations(): List<LocationList> {
-        return listOf()
-    }
+
+    override fun deleteLocation(locationDelete: LocationDelete) =
+        Location.delete(locationDelete.id)
+            ?.let { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
+
+    override fun getLocations(): List<LocationGet> =
+        Location.list()
+            .map { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
+
 }
