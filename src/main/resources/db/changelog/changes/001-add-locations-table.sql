@@ -1,5 +1,8 @@
 CREATE TABLE IF NOT EXISTS locations
 (
     id   BIGINT PRIMARY KEY AUTO_INCREMENT,
-    data VARCHAR(255)
+    data       VARCHAR(255) NOT NULL,
+    is_active  BOOLEAN      NOT NULL,
+    created_at TIMESTAMP    NOT NULL,
+    updated_at TIMESTAMP    NOT NULL
 );
