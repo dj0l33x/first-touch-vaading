@@ -18,7 +18,7 @@ class Location(val id: Long, val data: String, val createdAt: ZonedDateTime) {
             return Location(entity.id, entity.data, entity.createdAt)
         }
 
-        fun update(id: Long, data: String): Location? {
+        fun update(id: Long, data: String): Location {
             val newEntity = db.get(id)?.let { LocationEntity(it.id, data, it.createdAt) }
             if (newEntity == null) {
                 throw LocationNotFoundException()

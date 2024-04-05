@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service
 
 interface LocationService {
     fun saveLocation(locationSave: LocationSave): LocationGet
+    fun updateLocation(locationUpdate: LocationUpdate): LocationGet
     fun deleteLocation(locationDelete: LocationDelete): LocationGet?
     fun getLocations(): List<LocationGet>
 }
@@ -26,9 +27,15 @@ private class LocationServiceImpl : LocationService {
             .let { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
 
 
+    override fun updateLocation(locationUpdate: LocationUpdate): LocationGet =
+        Location.update(locationUpdate.id, locationUpdate.data)
+            .let { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
+
+
     override fun deleteLocation(locationDelete: LocationDelete) =
         Location.delete(locationDelete.id)
             ?.let { LocationGet(it.id, it.data, it.createdAt.toLocalDateTime()) }
+
 
     override fun getLocations(): List<LocationGet> =
         Location.list()
