@@ -6,9 +6,19 @@ logging:
     org.atmosphere: warn
 
 spring:
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    url: jdbc:h2:file:~/data/malma/db
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/changelog-master.xml
   mustache:
     check-template-location: false
 
 # Launch the default browser when starting the application in development mode
 vaadin:
-  launch-browser: true
+  launch-browser: false
