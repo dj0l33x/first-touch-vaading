@@ -1,17 +1,14 @@
 package com.github.dj0l33x.adapter.location
 
-import com.github.dj0l33x.port.location.LocationGet
+import com.github.dj0l33x.port.location.GetLocation
 import com.github.dj0l33x.port.location.LocationService
 import com.github.mvysny.karibudsl.v10.KComposite
 import com.github.mvysny.karibudsl.v10.button
-import com.github.mvysny.karibudsl.v10.flexGrow
 import com.github.mvysny.karibudsl.v10.grid
 import com.github.mvysny.karibudsl.v10.h3
 import com.github.mvysny.karibudsl.v10.onLeftClick
 import com.github.mvysny.karibudsl.v10.verticalLayout
 import com.github.mvysny.kaributools.setPrimary
-import com.vaadin.flow.component.notification.Notification
-import com.vaadin.flow.component.notification.NotificationVariant
 import com.vaadin.flow.router.PageTitle
 import com.vaadin.flow.router.Route
 
@@ -24,22 +21,22 @@ class LocationView(
     init {
         ui {
             verticalLayout {
+                val dialog = LocationAddDialog()
                 h3("Locations")
                 button("Add location") {
                     setPrimary()
                     onLeftClick {
-                        Notification
-                            .show("Success")
-                            .addThemeVariants(NotificationVariant.LUMO_SUCCESS)
-
+                        dialog.open()
                     }
                 }
-                grid<LocationGet> {
-                    flexGrow = 3.0
-                    addColumn(LocationGet::id).setHeader("ID")
-                    addColumn(LocationGet::data).setHeader("Data")
-                    addColumn(LocationGet::createdAt).setHeader("Created")
-                }.setItems(locationService.getLocations())
+                grid<GetLocation> {
+                    addColumn(GetLocation::id).setHeader("ID")
+                    addColumn(GetLocation::path).setHeader("Data")
+                    addColumn(GetLocation::isActive).setHeader("Active")
+                    addColumn(GetLocation::createdAt).setHeader("Created")
+                    addColumn(GetLocation::updatedAt).setHeader("Updated")
+                    addColumn(GetLocation::deletedAt).setHeader("Deleted")
+                }.setItems(locationService.loadAllLocations())
             }
         }
     }
